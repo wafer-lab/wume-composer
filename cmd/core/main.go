@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"vCore/internal/app/core"
+	"wume-composer/internal/app/core"
 )
 
 func main() {

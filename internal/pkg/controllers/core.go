@@ -3,11 +3,11 @@ package controllers
 import (
 	"net/http"
 
-	"vCore/internal/pkg/models"
+	"wume-composer/internal/pkg/models"
 )
 
 func IndexHandler(w http.ResponseWriter, _ *http.Request) {
-	models.Send(w, http.StatusOK, models.GetSuccessAnswer("Backend of project 'vCore'!"))
+	models.Send(w, http.StatusOK, models.GetSuccessAnswer("Backend of project 'wume-composer'!"))
 }
 
 func ApiIndexHandler(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,4 @@
-module vCore
+module wume-composer
 
 go 1.12
 

@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"vCore/internal/pkg/controllers"
-	"vCore/internal/pkg/db"
-	"vCore/internal/pkg/middleware"
+	"wume-composer/internal/pkg/controllers"
+	"wume-composer/internal/pkg/db"
+	"wume-composer/internal/pkg/middleware"
 )
 
 type Params struct {
@@ -39,7 +39,6 @@ func StartApp(params Params) error {
 	apiRouter.HandleFunc("/session", controllers.SignIn).Methods("POST", "OPTIONS")
 	apiRouter.HandleFunc("/session", controllers.SignOut).Methods("DELETE", "OPTIONS")
 	apiRouter.HandleFunc("/password", controllers.UpdatePassword).Methods("PUT", "OPTIONS")
-
 
 	// STATIC
 	router.PathPrefix("/static").Handler(http.StripPrefix(

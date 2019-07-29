@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
-	"vCore/internal/pkg/auth"
-	"vCore/internal/pkg/models"
+	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/models"
 )
 
 func AuthChecker(h http.Handler) http.Handler {

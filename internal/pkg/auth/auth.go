@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"vCore/internal/pkg/models"
+	"wume-composer/internal/pkg/models"
 )
 
 func CreateAuthCookie(data models.JwtData, lifetime time.Duration) *http.Cookie {

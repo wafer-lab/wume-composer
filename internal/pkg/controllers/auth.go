@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"vCore/internal/pkg/auth"
-	"vCore/internal/pkg/models"
+	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/models"
 )
 
 func IsAuth(w http.ResponseWriter, r *http.Request) {

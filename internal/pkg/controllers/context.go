@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"vCore/internal/pkg/models"
+	"wume-composer/internal/pkg/models"
 )
 
 func isAuth(r *http.Request) bool {
