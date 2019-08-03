@@ -4,13 +4,22 @@ import (
 	"database/sql"
 	"errors"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	"wume-composer/internal/pkg/config"
 )
 
+/********************/
+/*      ERRORS      */
+/********************/
+
 var (
-	NotInit     = errors.New("db wasn't initialized")
-	AlreadyInit = errors.New("db already initialized")
+	AlreadyInitError = errors.New("db already initialized")
+	NotInitError     = errors.New("db wasn't initialized")
 )
+
+/********************/
+/*  BASE FUNCTIONS  */
+/********************/
 
 var dbObj *sql.DB
 
@@ -20,12 +29,20 @@ func Ping() error {
 
 func Open() (err error) {
 	if dbObj != nil {
-		return AlreadyInit
+		return AlreadyInitError
 	}
-	dbObj, err = sql.Open("mysql", username+":"+password+"@tcp("+host+":"+port+")/")
+
+	source := "host=" + config.Db.Host +
+		" port=" + config.Db.Port +
+		" dbname=" + config.Db.DbName +
+		" user=" + config.Db.Username +
+		" password=" + config.Db.Password +
+		" sslmode=disable"
+	dbObj, err = sql.Open("postgres", source)
 	if err != nil {
 		return
 	}
+
 	err = dbObj.Ping()
 	return
 }
@@ -36,7 +53,7 @@ func Close() error {
 
 func QueryRow(query string, args ...interface{}) (*sql.Row, error) {
 	if dbObj == nil {
-		return nil, NotInit
+		return nil, NotInitError
 	}
 
 	return dbObj.QueryRow(query, args...), nil
@@ -44,7 +61,7 @@ func QueryRow(query string, args ...interface{}) (*sql.Row, error) {
 
 func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	if dbObj == nil {
-		return nil, NotInit
+		return nil, NotInitError
 	}
 
 	return dbObj.Query(query, args...)
@@ -53,7 +70,7 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 func Exec(query string, args ...interface{}) (sql.Result, error) {
 	if dbObj == nil {
 		var emptyResult sql.Result
-		return emptyResult, NotInit
+		return emptyResult, NotInitError
 	}
 
 	return dbObj.Exec(query, args...)
@@ -90,22 +107,20 @@ func findRowBy(dbName string, tableName string, cols string, where string, args 
 	return QueryRow("SELECT "+cols+" FROM "+dbName+"."+tableName+" WHERE "+where, args...)
 }
 
-// For future use
-//
-// func findRowsBy(dbName string, tableName string, cols string, where string, args ...interface{}) (*sql.Rows, error) {
-// 	if dbObj == nil {
-// 		return nil, NotInit
-// 	}
-//
-// 	if where == "" {
-// 		where = "1"
-// 	}
-// 	return Query("SELECT "+cols+" FROM "+dbName+"."+tableName+" WHERE "+where, args...)
-// }
+func findRowsBy(dbName string, tableName string, cols string, where string, args ...interface{}) (*sql.Rows, error) {
+	if dbObj == nil {
+		return nil, NotInitError
+	}
+
+	if where == "" {
+		where = "1"
+	}
+	return Query("SELECT "+cols+" FROM "+dbName+"."+tableName+" WHERE "+where, args...)
+}
 
 func updateBy(dbName string, tableName string, set string, where string, args ...interface{}) (int64, error) {
 	if dbObj == nil {
-		return 0, NotInit
+		return 0, NotInitError
 	}
 
 	if where == "" {
@@ -121,7 +136,7 @@ func updateBy(dbName string, tableName string, set string, where string, args ..
 
 func removeBy(dbName string, tableName string, where string, args ...interface{}) (int64, error) {
 	if dbObj == nil {
-		return 0, NotInit
+		return 0, NotInitError
 	}
 
 	if where == "" {
@@ -137,7 +152,7 @@ func removeBy(dbName string, tableName string, where string, args ...interface{}
 
 func truncate(dbName string, tableName string) error {
 	if dbObj == nil {
-		return NotInit
+		return NotInitError
 	}
 
 	_, err := Exec("TRUNCATE TABLE " + dbName + "." + tableName)

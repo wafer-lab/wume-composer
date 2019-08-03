@@ -8,17 +8,17 @@ import (
 )
 
 var (
-	FieldsError   = errors.New("incorrect fields")
-	NotFound      = errors.New("not found")
-	AlreadyExists = errors.New("already exists")
+	NotFoundError      = errors.New("not found")
+	AlreadyExistsError = errors.New("already exists")
+	IncorrectDataError = errors.New("incorrect data")
 )
 
 type InputModel interface {
-	Check() []string
+	Validate() []string
 }
 
 type OutputModel interface {
-	Send(w http.ResponseWriter)
+	MarshalJSON() ([]byte, error)
 }
 
 func Send(w http.ResponseWriter, statusCode int, outModel interface{}) {

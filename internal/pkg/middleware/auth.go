@@ -5,13 +5,14 @@ import (
 	"net/http"
 
 	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/config"
 	"wume-composer/internal/pkg/models"
 )
 
 func AuthChecker(h http.Handler) http.Handler {
 	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
-		jwtCookie, errNoCookie := req.Cookie(auth.CookieName)
+		jwtCookie, errNoCookie := req.Cookie(config.Auth.CookieName)
 		if errNoCookie != nil {
 			ctx = context.WithValue(ctx, "isAuth", false)
 			ctx = context.WithValue(ctx, "jwtData", models.JwtData{})

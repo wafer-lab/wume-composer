@@ -59,12 +59,12 @@ func GetUserDataAnswer(data UserData) *UserDataAnswer {
 }
 
 var UserUpdatedAnswer = MessageAnswer{
-	Status:  107,
+	Status:  106,
 	Message: "user updated",
 }
 
 var UserRemovedAnswer = MessageAnswer{
-	Status:  108,
+	Status:  107,
 	Message: "user removed",
 }
 

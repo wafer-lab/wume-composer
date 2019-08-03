@@ -6,17 +6,18 @@ import (
 	"net/http"
 	"time"
 
+	"wume-composer/internal/pkg/config"
 	"wume-composer/internal/pkg/models"
 )
 
 func CreateAuthCookie(data models.JwtData, lifetime time.Duration) *http.Cookie {
-	jwtStr, err := data.Marshal(lifetime, secret)
+	jwtStr, err := data.Marshal(lifetime, []byte(config.Auth.Secret))
 	if err != nil {
 		return &http.Cookie{}
 	}
 
 	return &http.Cookie{
-		Name:     CookieName,
+		Name:     config.Auth.CookieName,
 		Value:    jwtStr,
 		Expires:  time.Now().Add(lifetime),
 		HttpOnly: true,
@@ -25,7 +26,7 @@ func CreateAuthCookie(data models.JwtData, lifetime time.Duration) *http.Cookie 
 
 func CheckJwt(token string) (models.JwtData, error) {
 	data := models.JwtData{}
-	err := data.UnMarshal(token, secret)
+	err := data.UnMarshal(token, []byte(config.Auth.Secret))
 	return data, err
 }
 

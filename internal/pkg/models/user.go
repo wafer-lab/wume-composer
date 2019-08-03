@@ -1,24 +1,12 @@
 package models
 
 import (
-	"regexp"
+	"wume-composer/internal/pkg/verifier"
 )
 
 /********************
  *    IN MODELS     *
  ********************/
-
-/* COMMON CHECKERS */
-
-func CheckEmail(email string) bool {
-	matched, _ := regexp.MatchString(`^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$`, email)
-	return matched
-}
-
-func CheckUsername(username string) bool {
-	matched, _ := regexp.MatchString(`^[\w.-_@$]+$`, username)
-	return matched
-}
 
 /* SIGN IN DATA */
 
@@ -27,11 +15,11 @@ type SignInData struct {
 	Password string `json:"password" example:"Qwerty123"`
 }
 
-func (data SignInData) Check() (incorrectFields []string) {
-	if !CheckEmail(data.Login) && !CheckUsername(data.Login) {
+func (data SignInData) Validate() (incorrectFields []string) {
+	if !verifier.IsEmail(data.Login) && !verifier.IsUsername(data.Login) {
 		incorrectFields = append(incorrectFields, "login")
 	}
-	if data.Password == "" {
+	if verifier.IsEmpty(data.Password) {
 		incorrectFields = append(incorrectFields, "password")
 	}
 	return
@@ -45,14 +33,14 @@ type SignUpData struct {
 	Password string `json:"password" example:"SecretPass1!"`
 }
 
-func (data SignUpData) Check() (incorrectFields []string) {
-	if !CheckEmail(data.Email) {
+func (data SignUpData) Validate() (incorrectFields []string) {
+	if !verifier.IsEmail(data.Email) {
 		incorrectFields = append(incorrectFields, "email")
 	}
-	if !CheckUsername(data.Username) {
+	if !verifier.IsUsername(data.Username) {
 		incorrectFields = append(incorrectFields, "username")
 	}
-	if data.Password == "" {
+	if verifier.IsEmpty(data.Password) {
 		incorrectFields = append(incorrectFields, "password")
 	}
 	return
@@ -65,11 +53,11 @@ type UpdateUserData struct {
 	Username string `json:"username" example:"user_test"`
 }
 
-func (data UpdateUserData) Check() (incorrectFields []string) {
-	if !CheckEmail(data.Email) {
+func (data UpdateUserData) Validate() (incorrectFields []string) {
+	if !verifier.IsEmail(data.Email) {
 		incorrectFields = append(incorrectFields, "email")
 	}
-	if !CheckUsername(data.Username) {
+	if !verifier.IsUsername(data.Username) {
 		incorrectFields = append(incorrectFields, "username")
 	}
 	return
@@ -82,8 +70,8 @@ type UpdatePasswordData struct {
 	PasswordConfirm string `json:"password_confirm" example:"SecretPass2!"`
 }
 
-func (data UpdatePasswordData) Check() (incorrectFields []string) {
-	if data.NewPassword == "" {
+func (data UpdatePasswordData) Validate() (incorrectFields []string) {
+	if verifier.IsEmpty(data.NewPassword) {
 		incorrectFields = append(incorrectFields, "new_password")
 	}
 	if data.PasswordConfirm != data.NewPassword {
@@ -98,8 +86,8 @@ type RemoveUserData struct {
 	Password string `json:"password" example:"SecretPass1!"`
 }
 
-func (data RemoveUserData) Check() (incorrectFields []string) {
-	if data.Password == "" {
+func (data RemoveUserData) Validate() (incorrectFields []string) {
+	if verifier.IsEmpty(data.Password) {
 		incorrectFields = append(incorrectFields, "password")
 	}
 	return

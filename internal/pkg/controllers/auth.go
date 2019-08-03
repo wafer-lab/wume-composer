@@ -35,7 +35,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	jwtData, err, fields := auth.SignIn(signInData)
 	if err != nil {
 		if fields != nil {
-			if err == models.FieldsError {
+			if err == models.IncorrectDataError {
 				models.Send(w, http.StatusBadRequest, models.GetIncorrectFieldsAnswer(fields))
 			} else {
 				models.Send(w, http.StatusBadRequest, &models.IncorrectFieldsAnswer{
@@ -83,7 +83,7 @@ func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 	err, fields := auth.UpdatePassword(jwtData(r).Id, updateData)
 	if err != nil {
 		if fields != nil {
-			if err == models.FieldsError {
+			if err == models.IncorrectDataError {
 				models.Send(w, http.StatusBadRequest, models.GetIncorrectFieldsAnswer(fields))
 			} else {
 				models.Send(w, http.StatusBadRequest, &models.IncorrectFieldsAnswer{

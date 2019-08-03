@@ -5,16 +5,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"wume-composer/internal/pkg/config"
 	"wume-composer/internal/pkg/controllers"
 	"wume-composer/internal/pkg/db"
 	"wume-composer/internal/pkg/middleware"
 )
 
-type Params struct {
-	Port string
-}
-
-func StartApp(params Params) error {
+func StartApp() error {
 	if err := db.Open(); err != nil {
 		fmt.Println(err)
 	}
@@ -46,8 +43,8 @@ func StartApp(params Params) error {
 		http.FileServer(http.Dir("./static")),
 	))
 
-	fmt.Println("Starting core at " + params.Port)
-	return http.ListenAndServe(":"+params.Port, router)
+	fmt.Println("Starting core at " + config.Core.Port)
+	return http.ListenAndServe(":"+config.Core.Port, router)
 }
 
 func StopApp() {

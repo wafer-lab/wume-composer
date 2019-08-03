@@ -1,0 +1,16 @@
+{
+    "core": {
+        "port": "${PORT|6002}"
+    },
+    "db": {
+        "host": "${DB_HOST|localhost}",
+        "port": "${DB_PORT|5432}",
+        "username": "${DB_USERNAME|wume_composer}",
+        "password": "${DB_PASSWORD|wume_composer}",
+        "db_name": "${DB_DBNAME|wume_composer}"
+    },
+    "auth": {
+        "secret": "${JWT_SECRET|Very_Secret_Key!}",
+        "cookie_name": "jwt"
+    }
+}
