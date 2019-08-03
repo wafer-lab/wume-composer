@@ -4,17 +4,20 @@ package models
 // 200-299 - incorrect answer because of the user
 // 300-399 - incorrect answer because developers
 
+//easyjson:json
 type MessageAnswer struct {
 	Status  int    `json:"status, int" example:"100"`
 	Message string `json:"message, string" example:"ok"`
 }
 
-type IncorrectFieldsAnswer struct {
+//easyjson:json
+type IncorrectDataAnswer struct {
 	Status  int      `json:"status, int" example:"204"`
 	Message string   `json:"message, string" example:"incorrect fields"`
 	Data    []string `json:"data" example:"[email, username]"`
 }
 
+//easyjson:json
 type UserDataAnswer struct {
 	Status  int      `json:"status, int" example:"105"`
 	Message string   `json:"message, string" example:"user found"`
@@ -70,41 +73,34 @@ var UserRemovedAnswer = MessageAnswer{
 
 /* USERS ERRORS */
 
-// For future use
-//
-// func GetUserErrorAnswer(error string) *MessageAnswer {
-// 	return &MessageAnswer{
-// 		Status:  200,
-// 		ChatMessage: error,
-// 	}
-// }
+func GetUserErrorAnswer(error string) *MessageAnswer {
+	return &MessageAnswer{
+		Status:  200,
+		Message: error,
+	}
+}
+
+func GetIncorrectFieldsAnswer(data []string) *IncorrectDataAnswer {
+	return &IncorrectDataAnswer{
+		Status:  201,
+		Message: "incorrect data",
+		Data:    data,
+	}
+}
 
 var NotSignedInAnswer = MessageAnswer{
-	Status:  201,
-	Message: "not signed in",
-}
-
-var AlreadySignedInAnswer = MessageAnswer{
 	Status:  202,
-	Message: "already signed in",
+	Message: "need be signed in",
 }
 
-var AlreadySignedOutAnswer = MessageAnswer{
+var NotSignedOutAnswer = MessageAnswer{
 	Status:  203,
-	Message: "already signed out",
+	Message: "need be signed out",
 }
 
 var UserNotFoundAnswer = MessageAnswer{
-	Status:  205,
+	Status:  204,
 	Message: "user not found",
-}
-
-func GetIncorrectFieldsAnswer(data []string) *IncorrectFieldsAnswer {
-	return &IncorrectFieldsAnswer{
-		Status:  204,
-		Message: "incorrect fields",
-		Data:    data,
-	}
 }
 
 /* DEVELOPERS ERRORS */

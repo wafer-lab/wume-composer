@@ -16,8 +16,8 @@ var (
 )
 
 func getFilename() (string, error) {
-	for _, dir := range dirs {
-		filename, _ := filepath.Abs(dir + string(filepath.Separator) + "config.json")
+	for _, filename := range paths {
+		filename, _ := filepath.Abs(filename)
 		if _, err := os.Stat(filename); err == nil {
 			return filename, nil
 		}
@@ -82,13 +82,11 @@ func parse(config File) {
 func init() {
 	file, err := getFilename()
 	if err != nil {
-		fmt.Println("Config file not found!")
-		return
+		panic("Config file not found!")
 	}
 	config, err := load(file)
 	if err != nil {
-		fmt.Println("Invalid format! Error: " + err.Error())
-		return
+		panic("Invalid format! Error: " + err.Error())
 	}
 	parse(config)
 }

@@ -24,8 +24,10 @@ func (data *JwtData) UnMarshal(tokenString string, secret []byte) error {
 	token, err := jwt.ParseWithClaims(tokenString, data, func(token *jwt.Token) (interface{}, error) {
 		return secret, nil
 	})
-	if _, ok := token.Claims.(*JwtData); !ok || !token.Valid {
-		return err
+	if token != nil {
+		if _, ok := token.Claims.(*JwtData); !ok || !token.Valid {
+			return err
+		}
 	}
 	return nil
 }

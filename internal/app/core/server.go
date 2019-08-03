@@ -1,55 +1,46 @@
 package core
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"wume-composer/internal/pkg/config"
-	"wume-composer/internal/pkg/controllers"
 	"wume-composer/internal/pkg/db"
 	"wume-composer/internal/pkg/middleware"
+	"wume-composer/internal/pkg/router"
 )
 
-func StartApp() error {
+type Params struct {
+	Port   string
+	Prefix string
+}
+
+func StartApp(params Params) error {
 	if err := db.Open(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
-	router := mux.NewRouter()
-	apiRouter := router.PathPrefix("/api").Subrouter()
+	r := router.InitRouter(params.Prefix)
 
-	// BASE ROUTER
+	// Middleware
+	r.Use(middleware.ApplyCors)
+	r.Use(middleware.PanicCatcher)
+	r.Use(middleware.AuthChecker)
+	r.Use(middleware.ApplyJsonContentType)
 
-	router.Use(middleware.ApplyCors)
-	router.Use(middleware.PanicCatcher)
-
-	router.HandleFunc("/", controllers.IndexHandler)
-
-	// API ROUTER
-
-	apiRouter.Use(middleware.AuthChecker)
-	apiRouter.Use(middleware.ApplyJsonContentType)
-
-	apiRouter.HandleFunc("/", controllers.ApiIndexHandler)
-	apiRouter.HandleFunc("/session", controllers.IsAuth).Methods("GET", "OPTIONS")
-	apiRouter.HandleFunc("/session", controllers.SignIn).Methods("POST", "OPTIONS")
-	apiRouter.HandleFunc("/session", controllers.SignOut).Methods("DELETE", "OPTIONS")
-	apiRouter.HandleFunc("/password", controllers.UpdatePassword).Methods("PUT", "OPTIONS")
-
-	// STATIC
-	router.PathPrefix("/static").Handler(http.StripPrefix(
+	// TODO: Move static handler to NGINX
+	// Static files
+	r.PathPrefix("/static").Handler(http.StripPrefix(
 		"/static",
 		http.FileServer(http.Dir("./static")),
 	))
 
-	fmt.Println("Starting core at " + config.Core.Port)
-	return http.ListenAndServe(":"+config.Core.Port, router)
+	log.Println("Starting core at " + params.Port)
+	return http.ListenAndServe(":"+params.Port, r)
 }
 
 func StopApp() {
-	fmt.Println("Stopping core...")
+	log.Println("Stopping core...")
 	if err := db.Close(); err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }

@@ -17,6 +17,10 @@ var (
 	NotInitError     = errors.New("db wasn't initialized")
 )
 
+const (
+	uniqueErrorCode = "23505"
+)
+
 /********************/
 /*  BASE FUNCTIONS  */
 /********************/
@@ -34,7 +38,7 @@ func Open() (err error) {
 
 	source := "host=" + config.Db.Host +
 		" port=" + config.Db.Port +
-		" dbname=" + config.Db.DbName +
+		// " dbname=" + config.Db.DbName +
 		" user=" + config.Db.Username +
 		" password=" + config.Db.Password +
 		" sslmode=disable"
@@ -51,7 +55,7 @@ func Close() error {
 	return dbObj.Close()
 }
 
-func QueryRow(query string, args ...interface{}) (*sql.Row, error) {
+func queryRow(query string, args ...interface{}) (*sql.Row, error) {
 	if dbObj == nil {
 		return nil, NotInitError
 	}
@@ -59,7 +63,7 @@ func QueryRow(query string, args ...interface{}) (*sql.Row, error) {
 	return dbObj.QueryRow(query, args...), nil
 }
 
-func Query(query string, args ...interface{}) (*sql.Rows, error) {
+func query(query string, args ...interface{}) (*sql.Rows, error) {
 	if dbObj == nil {
 		return nil, NotInitError
 	}
@@ -67,7 +71,7 @@ func Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return dbObj.Query(query, args...)
 }
 
-func Exec(query string, args ...interface{}) (sql.Result, error) {
+func exec(query string, args ...interface{}) (sql.Result, error) {
 	if dbObj == nil {
 		var emptyResult sql.Result
 		return emptyResult, NotInitError
@@ -76,8 +80,8 @@ func Exec(query string, args ...interface{}) (sql.Result, error) {
 	return dbObj.Exec(query, args...)
 }
 
-func isExists(dbName string, tableName string, where string, args ...interface{}) (id int64, err error) {
-	row, err := findRowBy(dbName, tableName, "id", where, args...)
+func isExists(tableName string, where string, args ...interface{}) (id int64, err error) {
+	row, err := findRowBy(tableName, "id", where, args...)
 	if err != nil {
 		return
 	}
@@ -91,8 +95,8 @@ func isExists(dbName string, tableName string, where string, args ...interface{}
 	return id, nil
 }
 
-func insert(dbName string, tableName string, cols string, values string, args ...interface{}) (int64, error) {
-	result, err := Exec("INSERT INTO "+dbName+"."+tableName+" ("+cols+") VALUES ("+values+")", args...)
+func insert(tableName string, cols string, values string, args ...interface{}) (int64, error) {
+	result, err := exec("INSERT INTO "+tableName+" ("+cols+") VALUES ("+values+")", args...)
 	if err != nil {
 		return 0, err
 	}
@@ -100,14 +104,14 @@ func insert(dbName string, tableName string, cols string, values string, args ..
 	return result.LastInsertId()
 }
 
-func findRowBy(dbName string, tableName string, cols string, where string, args ...interface{}) (*sql.Row, error) {
+func findRowBy(tableName string, cols string, where string, args ...interface{}) (*sql.Row, error) {
 	if where == "" {
 		where = "1"
 	}
-	return QueryRow("SELECT "+cols+" FROM "+dbName+"."+tableName+" WHERE "+where, args...)
+	return queryRow("SELECT "+cols+" FROM "+tableName+" WHERE "+where, args...)
 }
 
-func findRowsBy(dbName string, tableName string, cols string, where string, args ...interface{}) (*sql.Rows, error) {
+func findRowsBy(tableName string, cols string, where string, args ...interface{}) (*sql.Rows, error) {
 	if dbObj == nil {
 		return nil, NotInitError
 	}
@@ -115,10 +119,10 @@ func findRowsBy(dbName string, tableName string, cols string, where string, args
 	if where == "" {
 		where = "1"
 	}
-	return Query("SELECT "+cols+" FROM "+dbName+"."+tableName+" WHERE "+where, args...)
+	return query("SELECT "+cols+" FROM "+tableName+" WHERE "+where, args...)
 }
 
-func updateBy(dbName string, tableName string, set string, where string, args ...interface{}) (int64, error) {
+func updateBy(tableName string, set string, where string, args ...interface{}) (int64, error) {
 	if dbObj == nil {
 		return 0, NotInitError
 	}
@@ -126,7 +130,7 @@ func updateBy(dbName string, tableName string, set string, where string, args ..
 	if where == "" {
 		where = "1"
 	}
-	result, err := Exec("UPDATE "+dbName+"."+tableName+" SET "+set+" WHERE "+where, args...)
+	result, err := exec("UPDATE "+tableName+" SET "+set+" WHERE "+where, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -134,7 +138,7 @@ func updateBy(dbName string, tableName string, set string, where string, args ..
 	return result.RowsAffected()
 }
 
-func removeBy(dbName string, tableName string, where string, args ...interface{}) (int64, error) {
+func removeBy(tableName string, where string, args ...interface{}) (int64, error) {
 	if dbObj == nil {
 		return 0, NotInitError
 	}
@@ -142,7 +146,7 @@ func removeBy(dbName string, tableName string, where string, args ...interface{}
 	if where == "" {
 		where = "1"
 	}
-	result, err := Exec("DELETE FROM "+dbName+"."+tableName+" WHERE "+where, args...)
+	result, err := exec("DELETE FROM "+tableName+" WHERE "+where, args...)
 	if err != nil {
 		return 0, err
 	}
@@ -150,12 +154,12 @@ func removeBy(dbName string, tableName string, where string, args ...interface{}
 	return result.RowsAffected()
 }
 
-func truncate(dbName string, tableName string) error {
+func truncate(tableName string) error {
 	if dbObj == nil {
 		return NotInitError
 	}
 
-	_, err := Exec("TRUNCATE TABLE " + dbName + "." + tableName)
+	_, err := exec("TRUNCATE TABLE " + tableName)
 	if err != nil {
 		return err
 	}

@@ -1,13 +1,9 @@
 package config
 
-import (
-	"path/filepath"
-)
-
-var dirs = []string{
-	".",
-	"..",
-	".." + string(filepath.Separator) + "..",
+var paths = []string{
+	"./config/config.json",
+	"../config/config.json",
+	"../../config/config.json",
 }
 
 var (
@@ -18,6 +14,7 @@ var (
 
 type CoreConfig struct {
 	Port string `json:"port"`
+	Prefix string `json:"prefix"`
 }
 
 type DatabaseConfig struct {
@@ -29,8 +26,9 @@ type DatabaseConfig struct {
 }
 
 type AuthorizationConfig struct {
-	CookieName string `json:"cookie_name"`
-	Secret     string `json:"secret"`
+	CookieName     string `json:"cookie_name"`
+	CookieLifetime uint64 `json:"cookie_lifetime"`
+	Secret         string `json:"secret"`
 }
 
 type File struct {

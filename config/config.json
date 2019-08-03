@@ -1,6 +1,7 @@
 {
     "core": {
-        "port": "${PORT|6002}"
+        "port": "${PORT|6002}",
+        "prefix": "/api"
     },
     "db": {
         "host": "${DB_HOST|localhost}",
@@ -11,6 +12,7 @@
     },
     "auth": {
         "secret": "${JWT_SECRET|Very_Secret_Key!}",
-        "cookie_name": "jwt"
+        "cookie_name": "jwt",
+        "cookie_lifetime": 43200
     }
 }
