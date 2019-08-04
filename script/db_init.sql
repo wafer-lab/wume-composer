@@ -1,5 +1,5 @@
--- DROP USER IF EXISTS wume_composer;
-CREATE USER wume_composer WITH
+-- DROP USER IF EXISTS wume-composer;
+CREATE USER wume-composer WITH
     LOGIN
     NOSUPERUSER
     INHERIT
@@ -7,12 +7,11 @@ CREATE USER wume_composer WITH
     NOCREATEROLE
     NOREPLICATION
     CONNECTION LIMIT -1
-    PASSWORD 'wume_composer';
+    PASSWORD 'wume-composer';
 
--- DROP DATABASE IF EXISTS wume_composer;
-CREATE DATABASE wume_composer
-    WITH
-    OWNER = wume_composer
+-- DROP DATABASE IF EXISTS wume-composer;
+CREATE DATABASE wume-composer
+WITH OWNER = wume-composer
     TEMPLATE = template0
     ENCODING = 'UTF8'
     -- LC_COLLATE = 'ru_RU.UTF-8'

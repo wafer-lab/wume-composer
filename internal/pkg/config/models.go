@@ -7,13 +7,14 @@ var paths = []string{
 }
 
 var (
-	Core CoreConfig
-	Db   DatabaseConfig
-	Auth AuthorizationConfig
+	Core   CoreConfig
+	Db     DatabaseConfig
+	Auth   AuthorizationConfig
+	Logger LoggerConfig
 )
 
 type CoreConfig struct {
-	Port string `json:"port"`
+	Port   string `json:"port"`
 	Prefix string `json:"prefix"`
 }
 
@@ -31,14 +32,29 @@ type AuthorizationConfig struct {
 	Secret         string `json:"secret"`
 }
 
+type LoggerOut struct {
+	Mode     string `json:"mode"`
+	Filename string `json:"filename, omitempty"`
+}
+
+type LoggerConfig struct {
+	Debug   LoggerOut `json:"debug"`
+	Info    LoggerOut `json:"info"`
+	Warning LoggerOut `json:"warning"`
+	Error   LoggerOut `json:"error"`
+	Fatal   LoggerOut `json:"fatal"`
+}
+
 type File struct {
-	Core CoreConfig          `json:"core"`
-	Db   DatabaseConfig      `json:"db"`
-	Auth AuthorizationConfig `json:"auth"`
+	Core   CoreConfig          `json:"core"`
+	Db     DatabaseConfig      `json:"db"`
+	Auth   AuthorizationConfig `json:"auth"`
+	Logger LoggerConfig        `json:"logger"`
 }
 
 func save(config File) {
 	Core = config.Core
 	Auth = config.Auth
 	Db = config.Db
+	Logger = config.Logger
 }

@@ -1,6 +1,6 @@
 {
     "core": {
-        "port": "${PORT|6002}",
+        "port": "${PORT|7071}",
         "prefix": "/api"
     },
     "db": {
@@ -14,5 +14,23 @@
         "secret": "${JWT_SECRET|Very_Secret_Key!}",
         "cookie_name": "jwt",
         "cookie_lifetime": 43200
+    },
+    "logger": {
+        "debug": {
+            "mode": "console"
+        },
+        "info": {
+            "mode": "console"
+        },
+        "warning": {
+            "mode": "console"
+        },
+        "error": {
+            "mode": "console"
+        },
+        "fatal": {
+            "mode": "file",
+            "filename": "log/fatal.log"
+        }
     }
 }

@@ -189,6 +189,8 @@ func easyjson9e1087fdDecodeWumeComposerInternalPkgModels2(in *jlexer.Lexer, out 
 			continue
 		}
 		switch key {
+		case "old_password":
+			out.OldPassword = string(in.String())
 		case "new_password":
 			out.NewPassword = string(in.String())
 		case "password_confirm":
@@ -208,8 +210,13 @@ func easyjson9e1087fdEncodeWumeComposerInternalPkgModels2(out *jwriter.Writer, i
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"new_password\":"
+		const prefix string = ",\"old_password\":"
 		out.RawString(prefix[1:])
+		out.String(string(in.OldPassword))
+	}
+	{
+		const prefix string = ",\"new_password\":"
+		out.RawString(prefix)
 		out.String(string(in.NewPassword))
 	}
 	{

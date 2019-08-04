@@ -38,7 +38,7 @@ func Open() (err error) {
 
 	source := "host=" + config.Db.Host +
 		" port=" + config.Db.Port +
-		// " dbname=" + config.Db.DbName +
+	// " dbname=" + config.Db.DbName +
 		" user=" + config.Db.Username +
 		" password=" + config.Db.Password +
 		" sslmode=disable"

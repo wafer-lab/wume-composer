@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"log"
 	"net/http"
 
 	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/models"
 )
 
@@ -32,7 +32,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := auth.SetAuthCookie(w, jwtData); err != nil {
-		log.Println("Impossible to set auth cookie! Error: " + err.Error())
+		logger.Error("Impossible to set auth cookie! Error: " + err.Error())
 	}
 	sendJson(w, http.StatusOK, models.SignedInAnswer)
 }

@@ -1,12 +1,12 @@
 package router
 
 import (
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
 	c "wume-composer/internal/pkg/controllers"
+	"wume-composer/internal/pkg/logger"
 )
 
 type Route struct {
@@ -58,6 +58,6 @@ func InitRouter(prefix string) *mux.Router {
 	routes.Prefix = prefix
 	router := mux.NewRouter()
 	initGroup(router, routes)
-	log.Println("router has been initialized")
+	logger.Debug("Router has been initialized.")
 	return router
 }

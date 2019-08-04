@@ -10,7 +10,6 @@ var (
 	IncorrectDataError = errors.New("incorrect data")
 )
 
-
 type InputModel interface {
 	Validate() []string
 }

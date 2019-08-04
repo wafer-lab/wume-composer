@@ -9,10 +9,10 @@ import (
 	"wume-composer/internal/pkg/models"
 )
 
-func AuthChecker(h http.Handler) http.Handler {
-	var mw http.HandlerFunc = func(res http.ResponseWriter, req *http.Request) {
-		ctx := req.Context()
-		jwtCookie, errNoCookie := req.Cookie(config.Auth.CookieName)
+func AuthChecker(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		jwtCookie, errNoCookie := r.Cookie(config.Auth.CookieName)
 		if errNoCookie != nil {
 			ctx = context.WithValue(ctx, "isAuth", false)
 			ctx = context.WithValue(ctx, "jwtData", models.JwtData{})
@@ -26,8 +26,6 @@ func AuthChecker(h http.Handler) http.Handler {
 				ctx = context.WithValue(ctx, "jwtData", data)
 			}
 		}
-		h.ServeHTTP(res, req.WithContext(ctx))
-	}
-
-	return mw
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }

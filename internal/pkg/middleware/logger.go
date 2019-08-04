@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"net/http"
+
+	"wume-composer/internal/pkg/logger"
 )
 
-func ApplyJsonContentType(next http.Handler) http.Handler {
+func Logger(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		logger.Debug("%s (%s)", r.RequestURI, r.Method)
 		next.ServeHTTP(w, r)
 	})
 }

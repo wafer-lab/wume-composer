@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
+	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/models"
 )
 
@@ -67,7 +67,7 @@ func handleCommonErrors(w http.ResponseWriter, err error, incorrectFields []stri
 			return false
 		}
 		sendJson(w, http.StatusInternalServerError, models.GetDeveloperErrorAnswer(err.Error()))
-		log.Println("Developer error: " + err.Error())
+		logger.Error("Developer error: " + err.Error())
 		return false
 	}
 	return true
@@ -76,13 +76,13 @@ func handleCommonErrors(w http.ResponseWriter, err error, incorrectFields []stri
 func sendJson(w http.ResponseWriter, statusCode int, outModel models.OutputModel) {
 	answer, err := outModel.MarshalJSON()
 	if err != nil {
-		log.Println(err)
+		logger.Error(err.Error())
 		return
 	}
 	w.WriteHeader(statusCode)
 	_, err = fmt.Fprintln(w, string(answer))
 	if err != nil {
-		log.Println(err)
+		logger.Error(err.Error())
 		return
 	}
 }

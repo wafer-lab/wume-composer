@@ -28,4 +28,3 @@ func IsUsername(username string) bool {
 func IsUsernameOrEmpty(username string) bool {
 	return IsEmpty(username) || usernameRegexp.MatchString(username)
 }
-

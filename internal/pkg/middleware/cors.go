@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"wume-composer/internal/pkg/logger"
 )
 
 type CorsData struct {
@@ -33,8 +34,8 @@ var corsData = CorsData{
 }
 
 func ApplyCors(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
-		origin, hasOrigin := req.Header["Origin"]
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin, hasOrigin := r.Header["Origin"]
 		if hasOrigin {
 			found := false
 			for _, allowed := range corsData.AllowOrigins {
@@ -44,20 +45,20 @@ func ApplyCors(next http.Handler) http.Handler {
 				}
 			}
 			if found {
-				res.Header().Set("Access-Control-Allow-Origin", origin[0])
-				res.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
+				w.Header().Set("Access-Control-Allow-Origin", origin[0])
+				w.Header().Set("Access-Control-Allow-Credentials", strconv.FormatBool(corsData.AllowCredentials))
 			} else {
-				fmt.Println("Origin " + origin[0] + " wasn't found!")
+				logger.Warn("Origin " + origin[0] + " wasn't found!")
 			}
 		}
 
-		if req.Method == "OPTIONS" {
-			res.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
-			res.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
-			res.Header().Set("Access-Control-Max-Age", strconv.Itoa(corsData.MaxAge))
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Methods", strings.Join(corsData.AllowMethods, ", "))
+			w.Header().Set("Access-Control-Allow-Headers", strings.Join(corsData.AllowHeaders, ", "))
+			w.Header().Set("Access-Control-Max-Age", strconv.Itoa(corsData.MaxAge))
 			return
 		}
 
-		next.ServeHTTP(res, req)
+		next.ServeHTTP(w, r)
 	})
 }

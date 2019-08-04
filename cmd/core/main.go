@@ -1,10 +1,9 @@
 package main
 
 import (
-	"fmt"
-
 	"wume-composer/internal/app/core"
 	"wume-composer/internal/pkg/config"
+	"wume-composer/internal/pkg/logger"
 )
 
 func main() {
@@ -14,6 +13,6 @@ func main() {
 	})
 	if err != nil {
 		core.StopApp()
-		fmt.Println(err)
+		logger.Error(err.Error())
 	}
 }

@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -29,7 +29,7 @@ func load(file string) (File, error) {
 	configFile, err := os.Open(file)
 	defer configFile.Close()
 	if err != nil {
-		fmt.Println(err.Error())
+		log.Fatalln(err.Error())
 	}
 	jsonParser := json.NewDecoder(configFile)
 	var config File
@@ -68,7 +68,7 @@ func handleStructure(val reflect.Value) {
 				}
 				val.SetString(newStr)
 			} else {
-				fmt.Println("Impossible to set environment variable!")
+				log.Println("Impossible to set environment variable!")
 			}
 		}
 	}
