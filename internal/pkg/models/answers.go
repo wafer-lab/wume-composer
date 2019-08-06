@@ -43,9 +43,9 @@ var SignedOutAnswer = MessageAnswer{
 	Message: "signed out",
 }
 
-var SignedUpAnswer = MessageAnswer{
+var UserCreatedAnswer = MessageAnswer{
 	Status:  103,
-	Message: "signed up",
+	Message: "user created",
 }
 
 var PasswordUpdatedAnswer = MessageAnswer{
@@ -101,6 +101,14 @@ var NotSignedOutAnswer = MessageAnswer{
 var UserNotFoundAnswer = MessageAnswer{
 	Status:  204,
 	Message: "user not found",
+}
+
+func GetUserExistsAnswer(data []string) *IncorrectDataAnswer {
+	return &IncorrectDataAnswer{
+		Status:  205,
+		Message: "user with this data already exists",
+		Data:    data,
+	}
 }
 
 /* DEVELOPERS ERRORS */

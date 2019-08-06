@@ -1,6 +1,6 @@
 {
     "core": {
-        "port": "${PORT|7071}",
+        "port": "${PORT|9091}",
         "prefix": "/api"
     },
     "db": {

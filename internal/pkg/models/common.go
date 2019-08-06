@@ -11,6 +11,7 @@ var (
 )
 
 type InputModel interface {
+	UnmarshalJSON(data []byte) error
 	Validate() []string
 }
 

@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/jwt"
 	"wume-composer/internal/pkg/config"
 	"wume-composer/internal/pkg/models"
 )
@@ -17,7 +17,7 @@ func AuthChecker(next http.Handler) http.Handler {
 			ctx = context.WithValue(ctx, "isAuth", false)
 			ctx = context.WithValue(ctx, "jwtData", models.JwtData{})
 		} else {
-			data, err := auth.CheckJwt(jwtCookie.Value)
+			data, err := jwt.CheckJwt(jwtCookie.Value)
 			if err != nil {
 				ctx = context.WithValue(ctx, "isAuth", false)
 				ctx = context.WithValue(ctx, "jwtData", models.JwtData{})

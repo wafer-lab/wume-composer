@@ -23,23 +23,23 @@ type Group struct {
 
 var routes = Group{
 	Routes: []Route{
-		{Path: "", Method: "GET", Handler: c.ApiIndexHandler},
-		{Path: "/password", Method: "PUT", Handler: c.UpdatePassword},
-		// {Path: "/avatar", Method: "PUT", Handler: c.UpdateAvatar},
-		// {Path: "/users", Method: "GET", Handler: c.GetUser},
+		{Path: ``, Method: "GET", Handler: c.ApiIndexHandler},
+		{Path: `/password`, Method: "PUT", Handler: c.UpdatePassword},
+		// {Path: `/avatar`, Method: "PUT", Handler: c.UpdateAvatar},
+		// {Path: `/users`, Method: "GET", Handler: c.GetUsers},
 	},
 	Groups: []Group{
-		{Prefix: "/session", Routes: []Route{
-			{Path: "", Method: "GET", Handler: c.IsAuth},
-			{Path: "", Method: "POST", Handler: c.SignIn},
-			{Path: "", Method: "DELETE", Handler: c.SignOut},
+		{Prefix: `/session`, Routes: []Route{
+			{Path: ``, Method: "GET", Handler: c.IsAuth},
+			{Path: ``, Method: "POST", Handler: c.SignIn},
+			{Path: ``, Method: "DELETE", Handler: c.SignOut},
 		}},
-		{Prefix: "/user", Routes: []Route{
-			// {Path: "", Method: "GET", Handler: c.GetUser},
-			// {Path: "/{id:[0-9]+}", Method: "GET", Handler: c.GetUser},
-			// {Path: "", Method: "POST", Handler: c.CreateUser},
-			// {Path: "", Method: "PUT", Handler: c.UpdateUser},
-			// {Path: "", Method: "DELETE", Handler: c.RemoveUser},
+		{Prefix: `/user`, Routes: []Route{
+			{Path: ``, Method: "GET", Handler: c.GetUser},
+			{Path: `/{username:[\w.]+}`, Method: "GET", Handler: c.GetUser},
+			{Path: ``, Method: "POST", Handler: c.CreateUser},
+			{Path: ``, Method: "PUT", Handler: c.UpdateUser},
+			{Path: ``, Method: "DELETE", Handler: c.RemoveUser},
 		}},
 	},
 }

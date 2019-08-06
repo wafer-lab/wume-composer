@@ -8,14 +8,14 @@ import (
 	"wume-composer/internal/pkg/models"
 )
 
-type AuthData struct {
+type UserData struct {
 	Id       int64  `json:"id"`
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Password string `json:"pass_hash"`
 }
 
-func AuthGetIdByEmail(email string) (id int64, err error) {
+func UserGetIdByEmail(email string) (id int64, err error) {
 	id, err = isExists("users", "email = $1", email)
 	if err != nil {
 		return
@@ -23,7 +23,7 @@ func AuthGetIdByEmail(email string) (id int64, err error) {
 	return id, nil
 }
 
-func AuthGetIdByUsername(username string) (id int64, err error) {
+func UserGetIdByUsername(username string) (id int64, err error) {
 	id, err = isExists("users", "username = $1", username)
 	if err != nil {
 		return
@@ -31,7 +31,7 @@ func AuthGetIdByUsername(username string) (id int64, err error) {
 	return id, nil
 }
 
-func AuthCreate(data AuthData) (id int64, err error) {
+func UserCreate(data UserData) (id int64, err error) {
 	id, err = isExists("users", "email = $1 OR username = $2",
 		data.Email, data.Username)
 	if err != nil {
@@ -45,16 +45,19 @@ func AuthCreate(data AuthData) (id int64, err error) {
 		data.Username, data.Email, data.Password)
 }
 
-func AuthFindByUsername(username string) (data AuthData, err error) {
-	row, err := findRowBy("users", "id, username, email, pass_hash", "username = ?", username)
+func UserGetByUsername(username string) (data UserData, err error) {
+	row, err := findRowBy("users", "id, username, email, pass_hash", "username = $1", username)
 	if err != nil {
 		return
 	}
 	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password)
+	if err == sql.ErrNoRows {
+		return data, models.NotFoundError
+	}
 	return
 }
 
-func AuthFindByEmailAndPassHash(email string, passHash string) (data AuthData, err error) {
+func UserGetByEmailAndPassHash(email string, passHash string) (data UserData, err error) {
 	row, err := findRowBy("users", "id, username, email, pass_hash",
 		"email = $1 AND pass_hash = $2", email, passHash)
 	if err != nil {
@@ -67,7 +70,7 @@ func AuthFindByEmailAndPassHash(email string, passHash string) (data AuthData, e
 	return
 }
 
-func AuthFindByUsernameAndPassHash(username string, passHash string) (data AuthData, err error) {
+func UserGetByUsernameAndPassHash(username string, passHash string) (data UserData, err error) {
 	row, err := findRowBy("users", "id, username, email, pass_hash",
 		"username = $1 AND pass_hash = $2", username, passHash)
 	if err != nil {
@@ -80,7 +83,7 @@ func AuthFindByUsernameAndPassHash(username string, passHash string) (data AuthD
 	return
 }
 
-func AuthUpdateData(data AuthData) error {
+func UserUpdateData(data UserData) error {
 	id, err := isExists("users", "id = $1", data.Id)
 	if err != nil {
 		return err
@@ -100,9 +103,8 @@ func AuthUpdateData(data AuthData) error {
 	return err
 }
 
-func AuthCheckPassword(id int64, passHash string) error {
-	row, err := findRowBy("users", "id, pass_hash",
-		"id = $1 AND pass_hash = $2", id, passHash)
+func UserCheckPassword(id int64, passHash string) error {
+	row, err := findRowBy("users", "id, pass_hash", "id = $1", id)
 	if err != nil {
 		return err
 	}
@@ -118,17 +120,17 @@ func AuthCheckPassword(id int64, passHash string) error {
 	return nil
 }
 
-func AuthUpdatePassword(id int64, passHash string) (err error) {
-	if err = AuthCheckPassword(id, passHash); err != nil {
+func UserUpdatePassword(id int64, oldPassHash string, newPassHash string) (err error) {
+	if err = UserCheckPassword(id, oldPassHash); err != nil {
 		return err
 	}
 
-	_, err = updateBy("users", "pass_hash = $1", "id = $2", passHash, id)
+	_, err = updateBy("users", "pass_hash = $1", "id = $2", newPassHash, id)
 	return err
 }
 
-func AuthRemove(id int64, passHash string) error {
-	if err := AuthCheckPassword(id, passHash); err != nil {
+func UserRemove(id int64, passHash string) error {
+	if err := UserCheckPassword(id, passHash); err != nil {
 		return err
 	}
 
@@ -136,6 +138,6 @@ func AuthRemove(id int64, passHash string) error {
 	return err
 }
 
-func AuthTruncate() error {
+func UserTruncate() error {
 	return truncate("users")
 }

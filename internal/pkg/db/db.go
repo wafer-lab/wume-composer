@@ -95,13 +95,16 @@ func isExists(tableName string, where string, args ...interface{}) (id int64, er
 	return id, nil
 }
 
-func insert(tableName string, cols string, values string, args ...interface{}) (int64, error) {
-	result, err := exec("INSERT INTO "+tableName+" ("+cols+") VALUES ("+values+")", args...)
+func insert(tableName string, cols string, values string, args ...interface{}) (id int64, err error) {
+	row, err := queryRow("INSERT INTO "+tableName+" ("+cols+") VALUES ("+values+") RETURNING id", args...)
 	if err != nil {
-		return 0, err
+		return
 	}
-
-	return result.LastInsertId()
+	err = row.Scan(&id)
+	if err != nil {
+		return
+	}
+	return id, nil
 }
 
 func findRowBy(tableName string, cols string, where string, args ...interface{}) (*sql.Row, error) {

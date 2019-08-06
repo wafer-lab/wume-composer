@@ -3,9 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	"wume-composer/internal/pkg/auth"
+	"wume-composer/internal/pkg/jwt"
 	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/models"
+	"wume-composer/internal/pkg/user"
 )
 
 func IsAuth(w http.ResponseWriter, r *http.Request) {
@@ -26,12 +27,12 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jwtData, err, incorrectFields := auth.SignIn(signInData)
+	jwtData, err, incorrectFields := user.SignIn(signInData)
 	if !handleCommonErrors(w, err, incorrectFields) {
 		return
 	}
 
-	if err := auth.SetAuthCookie(w, jwtData); err != nil {
+	if err := jwt.SetAuthCookie(w, jwtData); err != nil {
 		logger.Error("Impossible to set auth cookie! Error: " + err.Error())
 	}
 	sendJson(w, http.StatusOK, models.SignedInAnswer)
@@ -41,24 +42,6 @@ func SignOut(w http.ResponseWriter, r *http.Request) {
 	if !requireAuth(w, r) {
 		return
 	}
-	auth.RemoveAuthCookie(w)
+	jwt.RemoveAuthCookie(w)
 	sendJson(w, http.StatusOK, models.SignedOutAnswer)
-}
-
-func UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	if !requireAuth(w, r) {
-		return
-	}
-
-	updateData := models.UpdatePasswordData{}
-	if !parseJson(w, r, &updateData) {
-		return
-	}
-
-	err, incorrectFields := auth.UpdatePassword(jwtData(r).Id, updateData)
-	if !handleCommonErrors(w, err, incorrectFields) {
-		return
-	}
-
-	sendJson(w, http.StatusOK, models.PasswordUpdatedAnswer)
 }

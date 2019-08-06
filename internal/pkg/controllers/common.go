@@ -1,10 +1,12 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/models"
 )
@@ -33,13 +35,41 @@ func requireNotAuth(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
+func getStrParam(w http.ResponseWriter, r *http.Request, name string) (string, error) {
+	vars := mux.Vars(r)
+	result, ok := vars[name]
+	if ok {
+		return result, nil
+	} else {
+		return "", models.IncorrectDataError
+	}
+}
+
+func getIntParam(w http.ResponseWriter, r *http.Request, name string) (int64, error) {
+	str, err := getStrParam(w, r, name)
+	if err != nil {
+		return 0, err
+	}
+	result, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		return 0, models.IncorrectDataError
+	}
+	return result, nil
+}
+
 func parseJson(w http.ResponseWriter, r *http.Request, result models.InputModel) bool {
-	if err := json.NewDecoder(r.Body).Decode(&result); err != nil {
-		sendJson(w, http.StatusInternalServerError, models.IncorrectJsonAnswer)
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		sendJson(w, http.StatusInternalServerError, models.GetDeveloperErrorAnswer(err.Error()))
 		return false
 	}
 
-	if err := r.Body.Close(); err != nil {
+	if err = r.Body.Close(); err != nil {
+		sendJson(w, http.StatusInternalServerError, models.GetDeveloperErrorAnswer(err.Error()))
+		return false
+	}
+
+	if err = result.UnmarshalJSON(data); err != nil {
 		sendJson(w, http.StatusInternalServerError, models.IncorrectJsonAnswer)
 		return false
 	}
