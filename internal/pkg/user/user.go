@@ -44,17 +44,17 @@ func SignIn(signInData models.SignInData) (jwt models.JwtData, err error, incorr
 	}, nil, nil
 }
 
-func GetUser(username string) (models.UserData, error, []string) {
+func GetUser(username string) (models.UserData, error) {
 	userData, err := db.UserGetByUsername(username)
 	if err != nil {
-		return models.UserData{}, err, nil
+		return models.UserData{}, err
 	}
 
 	return models.UserData{
 		Id:       userData.Id,
 		Email:    userData.Email,
 		Username: userData.Username,
-	}, nil, nil
+	}, nil
 }
 
 func CreateUser(signUpData models.SignUpData) (jwt models.JwtData, err error, incorrectFields []string) {
@@ -152,4 +152,16 @@ func RemoveUser(id int64, removeData models.RemoveUserData) (error, []string) {
 		return models.IncorrectDataError, []string{"password"}
 	}
 	return err, nil
+}
+
+func GetUsers(page uint, limit uint) (models.UsersData, error) {
+	usersData, count, err := db.UsersGet(limit, (page-1)*limit)
+	if err != nil {
+		return models.UsersData{}, err
+	}
+
+	return models.UsersData{
+		Users: usersData,
+		Count: count,
+	}, nil
 }

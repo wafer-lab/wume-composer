@@ -138,6 +138,30 @@ func UserRemove(id int64, passHash string) error {
 	return err
 }
 
-func UserTruncate() error {
+func UsersGet(limit, offset uint) (usersData []models.UsersRowData, count uint64, err error) {
+	row, err := queryRow("SELECT COUNT(id) FROM users")
+	if err != nil {
+		return
+	}
+	err = row.Scan(&count)
+
+	rows, err := query("SELECT id, username, email FROM users ORDER BY id LIMIT $1 OFFSET $2", limit, offset)
+	if err != nil {
+		return
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		userData := models.UsersRowData{}
+		err = rows.Scan(&userData.Id, &userData.Username, &userData.Email)
+		if err != nil {
+			return
+		}
+		usersData = append(usersData, userData)
+	}
+	return
+}
+
+func UsersTruncate() error {
 	return truncate("users")
 }

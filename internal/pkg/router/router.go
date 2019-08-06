@@ -26,7 +26,7 @@ var routes = Group{
 		{Path: ``, Method: "GET", Handler: c.ApiIndexHandler},
 		{Path: `/password`, Method: "PUT", Handler: c.UpdatePassword},
 		// {Path: `/avatar`, Method: "PUT", Handler: c.UpdateAvatar},
-		// {Path: `/users`, Method: "GET", Handler: c.GetUsers},
+		{Path: `/users`, Method: "GET", Handler: c.GetUsers},
 	},
 	Groups: []Group{
 		{Prefix: `/session`, Routes: []Route{

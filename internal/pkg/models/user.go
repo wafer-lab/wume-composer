@@ -114,3 +114,16 @@ type UserData struct {
 	Username string `json:"username, string" example:"user_test"`
 	Email    string `json:"email, string" example:"user_test@test.com"`
 }
+
+//easyjson:json
+type UsersRowData struct {
+	Id       int64  `json:"id, string" example:"1"`
+	Username string `json:"username, string" example:"user_test"`
+	Email    string `json:"email, string" example:"user_test@test.com"`
+}
+
+//easyjson:json
+type UsersData struct {
+	Users []UsersRowData `json:"users"`
+	Count uint64         `json:"count" example:"123"`
+}

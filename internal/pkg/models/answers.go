@@ -24,6 +24,13 @@ type UserDataAnswer struct {
 	Data    UserData `json:"data"`
 }
 
+//easyjson:json
+type UsersDataAnswer struct {
+	Status  int      `json:"status, int" example:"108"`
+	Message string   `json:"message, string" example:"users found"`
+	Data    UsersData `json:"data"`
+}
+
 /* SUCCESS ANSWERS */
 
 func GetSuccessAnswer(message string) *MessageAnswer {
@@ -69,6 +76,14 @@ var UserUpdatedAnswer = MessageAnswer{
 var UserRemovedAnswer = MessageAnswer{
 	Status:  107,
 	Message: "user removed",
+}
+
+func GetUsersDataAnswer(data UsersData) *UsersDataAnswer {
+	return &UsersDataAnswer{
+		Status:  108,
+		Message: "users found",
+		Data:    data,
+	}
 }
 
 /* USERS ERRORS */

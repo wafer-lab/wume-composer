@@ -38,16 +38,16 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := getStrParam(w, r, "username")
+	username, err := getStrUrlParam(r, "username")
 	if err != nil {
 		username = jwtData(r).Username
 	}
 
-	userData, err, incorrectFields := user.GetUser(username)
+	userData, err := user.GetUser(username)
 	if err == models.NotFoundError {
 		sendJson(w, http.StatusNotFound, models.UserNotFoundAnswer)
 		return
-	} else if !handleCommonErrors(w, err, incorrectFields) {
+	} else if !handleCommonErrors(w, err, nil) {
 		return
 	}
 
@@ -113,4 +113,27 @@ func RemoveUser(w http.ResponseWriter, r *http.Request) {
 
 	jwt.RemoveAuthCookie(w)
 	sendJson(w, http.StatusOK, models.UserRemovedAnswer)
+}
+
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	if !requireAuth(w, r) {
+		return
+	}
+
+	page, err := getIntQueryParam(r, "page")
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	limit, err := getIntQueryParam(r, "limit")
+	if err != nil || limit < 1 || limit > 100 {
+		limit = 10
+	}
+
+	usersData, err := user.GetUsers(uint(page), uint(limit))
+	if !handleCommonErrors(w, err, nil) {
+		return
+	}
+
+	sendJson(w, http.StatusOK, models.GetUsersDataAnswer(usersData))
 }

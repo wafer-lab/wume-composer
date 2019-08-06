@@ -35,7 +35,7 @@ func requireNotAuth(w http.ResponseWriter, r *http.Request) bool {
 	return true
 }
 
-func getStrParam(w http.ResponseWriter, r *http.Request, name string) (string, error) {
+func getStrUrlParam(r *http.Request, name string) (string, error) {
 	vars := mux.Vars(r)
 	result, ok := vars[name]
 	if ok {
@@ -45,8 +45,24 @@ func getStrParam(w http.ResponseWriter, r *http.Request, name string) (string, e
 	}
 }
 
-func getIntParam(w http.ResponseWriter, r *http.Request, name string) (int64, error) {
-	str, err := getStrParam(w, r, name)
+func getIntUrlParam(r *http.Request, name string) (int64, error) {
+	str, err := getStrUrlParam(r, name)
+	if err != nil {
+		return 0, err
+	}
+	result, err := strconv.ParseInt(str, 10, 64)
+	if err != nil {
+		return 0, models.IncorrectDataError
+	}
+	return result, nil
+}
+
+func getStrQueryParam(r *http.Request, name string) (string, error) {
+	return r.URL.Query().Get(name), nil
+}
+
+func getIntQueryParam(r *http.Request, name string) (int64, error) {
+	str, err := getStrQueryParam(r, name)
 	if err != nil {
 		return 0, err
 	}
