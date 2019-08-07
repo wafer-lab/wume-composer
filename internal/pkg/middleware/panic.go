@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"wume-composer/internal/pkg/logger"
+	"wume-composer/internal/pkg/common/logger"
 )
 
 func PanicCatcher(next http.Handler) http.Handler {

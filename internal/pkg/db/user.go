@@ -13,6 +13,7 @@ type UserData struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	Password string `json:"pass_hash"`
+	Avatar   string `json:"avatar"`
 }
 
 func UserGetIdByEmail(email string) (id int64, err error) {
@@ -46,11 +47,11 @@ func UserCreate(data UserData) (id int64, err error) {
 }
 
 func UserGetByUsername(username string) (data UserData, err error) {
-	row, err := findRowBy("users", "id, username, email, pass_hash", "username = $1", username)
+	row, err := findRowBy("users", "id, username, email, pass_hash, avatar", "username = $1", username)
 	if err != nil {
 		return
 	}
-	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password)
+	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password, &data.Avatar)
 	if err == sql.ErrNoRows {
 		return data, models.NotFoundError
 	}
@@ -58,12 +59,12 @@ func UserGetByUsername(username string) (data UserData, err error) {
 }
 
 func UserGetByEmailAndPassHash(email string, passHash string) (data UserData, err error) {
-	row, err := findRowBy("users", "id, username, email, pass_hash",
+	row, err := findRowBy("users", "id, username, email, pass_hash, avatar",
 		"email = $1 AND pass_hash = $2", email, passHash)
 	if err != nil {
 		return
 	}
-	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password)
+	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password, &data.Avatar)
 	if err == sql.ErrNoRows {
 		return data, models.NotFoundError
 	}
@@ -71,12 +72,12 @@ func UserGetByEmailAndPassHash(email string, passHash string) (data UserData, er
 }
 
 func UserGetByUsernameAndPassHash(username string, passHash string) (data UserData, err error) {
-	row, err := findRowBy("users", "id, username, email, pass_hash",
+	row, err := findRowBy("users", "id, username, email, pass_hash, avatar",
 		"username = $1 AND pass_hash = $2", username, passHash)
 	if err != nil {
 		return
 	}
-	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password)
+	err = row.Scan(&data.Id, &data.Username, &data.Email, &data.Password, &data.Avatar)
 	if err == sql.ErrNoRows {
 		return data, models.NotFoundError
 	}
@@ -103,6 +104,24 @@ func UserUpdateData(data UserData) error {
 	return err
 }
 
+func UserUpdateAvatar(id int64, avatar string) (string, error) {
+	row, err := findRowBy("users", "avatar", "id = $1", id)
+	if err != nil {
+		return "", err
+	}
+
+	var oldAvatar string
+	err = row.Scan(&oldAvatar)
+	if err == sql.ErrNoRows {
+		return "", models.NotFoundError
+	} else if err != nil {
+		return "", err
+	}
+
+	_, err = updateBy("users", "avatar = $1", "id = $2", avatar, id)
+	return oldAvatar, err
+}
+
 func UserCheckPassword(id int64, passHash string) error {
 	row, err := findRowBy("users", "id, pass_hash", "id = $1", id)
 	if err != nil {
@@ -112,6 +131,8 @@ func UserCheckPassword(id int64, passHash string) error {
 	err = row.Scan(&id, &realPassHash)
 	if err == sql.ErrNoRows {
 		return models.NotFoundError
+	} else if err != nil {
+		return err
 	}
 
 	if passHash != realPassHash {
@@ -145,7 +166,7 @@ func UsersGet(limit, offset uint) (usersData []models.UsersRowData, count uint64
 	}
 	err = row.Scan(&count)
 
-	rows, err := query("SELECT id, username, email FROM users ORDER BY id LIMIT $1 OFFSET $2", limit, offset)
+	rows, err := query("SELECT id, username, email, avatar FROM users ORDER BY id LIMIT $1 OFFSET $2", limit, offset)
 	if err != nil {
 		return
 	}
@@ -153,7 +174,7 @@ func UsersGet(limit, offset uint) (usersData []models.UsersRowData, count uint64
 	defer rows.Close()
 	for rows.Next() {
 		userData := models.UsersRowData{}
-		err = rows.Scan(&userData.Id, &userData.Username, &userData.Email)
+		err = rows.Scan(&userData.Id, &userData.Username, &userData.Email, &userData.Avatar)
 		if err != nil {
 			return
 		}

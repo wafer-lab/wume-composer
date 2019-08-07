@@ -3,8 +3,8 @@ package core
 import (
 	"net/http"
 
+	"wume-composer/internal/pkg/common/logger"
 	"wume-composer/internal/pkg/db"
-	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/middleware"
 	"wume-composer/internal/pkg/router"
 )
@@ -30,10 +30,7 @@ func StartApp(params Params) error {
 
 	// TODO: Move static handler to NGINX
 	// Static files
-	r.PathPrefix("/static").Handler(http.StripPrefix(
-		"/static",
-		http.FileServer(http.Dir("./static")),
-	))
+	r.PathPrefix("/static").Handler(http.StripPrefix( "/static", http.FileServer(http.Dir("./static"))))
 
 	logger.Info("Starting core at " + params.Port)
 	return http.ListenAndServe(":"+params.Port, r)

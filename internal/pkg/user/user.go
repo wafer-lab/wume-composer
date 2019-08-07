@@ -4,9 +4,9 @@ import (
 	"crypto/sha256"
 	"fmt"
 
+	"wume-composer/internal/pkg/common/verifier"
 	"wume-composer/internal/pkg/db"
 	"wume-composer/internal/pkg/models"
-	"wume-composer/internal/pkg/verifier"
 )
 
 func PasswordHash(password string) string {
@@ -54,6 +54,7 @@ func GetUser(username string) (models.UserData, error) {
 		Id:       userData.Id,
 		Email:    userData.Email,
 		Username: userData.Username,
+		Avatar: userData.Avatar,
 	}, nil
 }
 

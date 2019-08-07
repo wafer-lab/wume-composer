@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 
+	"wume-composer/internal/pkg/common/logger"
 	"wume-composer/internal/pkg/jwt"
-	"wume-composer/internal/pkg/logger"
 	"wume-composer/internal/pkg/models"
 	"wume-composer/internal/pkg/user"
 )
@@ -38,7 +38,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username, err := getStrUrlParam(r, "username")
+	username, err := getStrQueryParam(r, "username")
 	if err != nil {
 		username = jwtData(r).Username
 	}

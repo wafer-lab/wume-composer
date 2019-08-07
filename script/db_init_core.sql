@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS users
         CONSTRAINT users_pk PRIMARY KEY,
     email     VARCHAR(255) NOT NULL,
     username  VARCHAR(32)  NOT NULL,
-    pass_hash VARCHAR(64)  NOT NULL
+    pass_hash VARCHAR(64)  NOT NULL,
+    avatar    VARCHAR(255) DEFAULT ''
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS users_email_uindex

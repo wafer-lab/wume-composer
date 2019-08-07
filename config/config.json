@@ -1,6 +1,6 @@
 {
     "core": {
-        "port": "${PORT|6001}",
+        "port": "${PORT|9091}",
         "prefix": "/api"
     },
     "db": {
@@ -31,6 +31,16 @@
         "fatal": {
             "mode": "file",
             "filename": "log/fatal.log"
+        }
+    },
+    "storage": {
+        "avatar": {
+            "dir": "./upload/avatar/",
+            "url": "/upload/avatar/"
+        },
+        "trash": {
+            "dir": "./trash/",
+            "url": "/trash/"
         }
     }
 }

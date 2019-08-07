@@ -2,16 +2,16 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
 	"reflect"
 	"regexp"
-
-	"wume-composer/internal/pkg/models"
 )
 
 var (
+	noConfigFile = errors.New("no config file")
 	envVarRegexp = regexp.MustCompile(`^\${([^|]*)(?:\|([^|]*))?}$`)
 )
 
@@ -22,7 +22,7 @@ func getFilename() (string, error) {
 			return filename, nil
 		}
 	}
-	return "", models.NotFoundError
+	return "", noConfigFile
 }
 
 func load(file string) (File, error) {

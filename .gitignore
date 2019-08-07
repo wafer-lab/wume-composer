@@ -41,3 +41,7 @@ tmp/
 
 # Deploy keys
 deploy_key
+
+# Dirs with content
+upload
+trash

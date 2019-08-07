@@ -4,8 +4,8 @@ import (
 	"context"
 	"net/http"
 
+	"wume-composer/internal/pkg/common/config"
 	"wume-composer/internal/pkg/jwt"
-	"wume-composer/internal/pkg/config"
 	"wume-composer/internal/pkg/models"
 )
 

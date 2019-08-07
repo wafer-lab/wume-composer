@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"wume-composer/internal/pkg/logger"
+	"wume-composer/internal/pkg/common/logger"
 )
 
 func Logger(next http.Handler) http.Handler {

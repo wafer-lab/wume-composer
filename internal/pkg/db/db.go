@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	_ "github.com/lib/pq"
-	"wume-composer/internal/pkg/config"
+	"wume-composer/internal/pkg/common/config"
 )
 
 /********************/

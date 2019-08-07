@@ -31,6 +31,13 @@ type UsersDataAnswer struct {
 	Data    UsersData `json:"data"`
 }
 
+//easyjson:json
+type UploadAvatarAnswer struct {
+	Status  int    `json:"status, int" example:"109"`
+	Message string `json:"message, string" example:"avatar uploaded"`
+	Data    string `json:"data" example:"/upload/1.jpg"`
+}
+
 /* SUCCESS ANSWERS */
 
 func GetSuccessAnswer(message string) *MessageAnswer {
@@ -86,6 +93,14 @@ func GetUsersDataAnswer(data UsersData) *UsersDataAnswer {
 	}
 }
 
+func GetUploadAvatarAnswer(url string) *UploadAvatarAnswer {
+	return &UploadAvatarAnswer{
+		Status:  109,
+		Message: "avatar uploaded",
+		Data:    url,
+	}
+}
+
 /* USERS ERRORS */
 
 func GetUserErrorAnswer(error string) *MessageAnswer {
@@ -124,6 +139,11 @@ func GetUserExistsAnswer(data []string) *IncorrectDataAnswer {
 		Message: "user with this data already exists",
 		Data:    data,
 	}
+}
+
+var FormTooBigAnswer = MessageAnswer{
+	Status:  206,
+	Message: "multipart form is too big",
 }
 
 /* DEVELOPERS ERRORS */

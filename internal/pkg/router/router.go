@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"wume-composer/internal/pkg/common/logger"
 	c "wume-composer/internal/pkg/controllers"
-	"wume-composer/internal/pkg/logger"
 )
 
 type Route struct {
@@ -25,7 +25,7 @@ var routes = Group{
 	Routes: []Route{
 		{Path: ``, Method: "GET", Handler: c.ApiIndexHandler},
 		{Path: `/password`, Method: "PUT", Handler: c.UpdatePassword},
-		// {Path: `/avatar`, Method: "PUT", Handler: c.UpdateAvatar},
+		{Path: `/avatar`, Method: "PUT", Handler: c.UploadAvatar},
 		{Path: `/users`, Method: "GET", Handler: c.GetUsers},
 	},
 	Groups: []Group{
@@ -36,7 +36,7 @@ var routes = Group{
 		}},
 		{Prefix: `/user`, Routes: []Route{
 			{Path: ``, Method: "GET", Handler: c.GetUser},
-			{Path: `/{username:[\w.]+}`, Method: "GET", Handler: c.GetUser},
+			// {Path: `/{username:[\w.]+}`, Method: "GET", Handler: c.GetUser},
 			{Path: ``, Method: "POST", Handler: c.CreateUser},
 			{Path: ``, Method: "PUT", Handler: c.UpdateUser},
 			{Path: ``, Method: "DELETE", Handler: c.RemoveUser},

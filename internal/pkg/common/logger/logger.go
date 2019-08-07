@@ -7,7 +7,7 @@ import (
 	"os"
 	"runtime/debug"
 
-	"wume-composer/internal/pkg/config"
+	"wume-composer/internal/pkg/common/config"
 )
 
 const (

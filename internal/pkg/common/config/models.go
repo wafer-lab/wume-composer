@@ -7,10 +7,11 @@ var paths = []string{
 }
 
 var (
-	Core   CoreConfig
-	Db     DatabaseConfig
-	Auth   AuthorizationConfig
-	Logger LoggerConfig
+	Core    CoreConfig
+	Db      DatabaseConfig
+	Auth    AuthorizationConfig
+	Logger  LoggerConfig
+	Storage StorageConfig
 )
 
 type CoreConfig struct {
@@ -45,11 +46,22 @@ type LoggerConfig struct {
 	Fatal   LoggerOut `json:"fatal"`
 }
 
+type StoragePaths struct {
+	Dir string `json:"dir"`
+	Url string `json:"url"`
+}
+
+type StorageConfig struct {
+	Avatar StoragePaths `json:"avatar"`
+	Trash  StoragePaths `json:"trash"`
+}
+
 type File struct {
-	Core   CoreConfig          `json:"core"`
-	Db     DatabaseConfig      `json:"db"`
-	Auth   AuthorizationConfig `json:"auth"`
-	Logger LoggerConfig        `json:"logger"`
+	Core    CoreConfig          `json:"core"`
+	Db      DatabaseConfig      `json:"db"`
+	Auth    AuthorizationConfig `json:"auth"`
+	Logger  LoggerConfig        `json:"logger"`
+	Storage StorageConfig       `json:"storage"`
 }
 
 func save(config File) {
@@ -57,4 +69,5 @@ func save(config File) {
 	Auth = config.Auth
 	Db = config.Db
 	Logger = config.Logger
+	Storage = config.Storage
 }

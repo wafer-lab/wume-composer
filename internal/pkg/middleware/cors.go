@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"wume-composer/internal/pkg/logger"
+	"wume-composer/internal/pkg/common/logger"
 )
 
 type CorsData struct {

@@ -42,6 +42,8 @@ func easyjson9e1087fdDecodeWumeComposerInternalPkgModels(in *jlexer.Lexer, out *
 			out.Username = string(in.String())
 		case "email":
 			out.Email = string(in.String())
+		case "avatar":
+			out.Avatar = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -70,6 +72,11 @@ func easyjson9e1087fdEncodeWumeComposerInternalPkgModels(out *jwriter.Writer, in
 		const prefix string = ",\"email\":"
 		out.RawString(prefix)
 		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"avatar\":"
+		out.RawString(prefix)
+		out.String(string(in.Avatar))
 	}
 	out.RawByte('}')
 }
@@ -227,6 +234,8 @@ func easyjson9e1087fdDecodeWumeComposerInternalPkgModels2(in *jlexer.Lexer, out 
 			out.Username = string(in.String())
 		case "email":
 			out.Email = string(in.String())
+		case "avatar":
+			out.Avatar = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -255,6 +264,11 @@ func easyjson9e1087fdEncodeWumeComposerInternalPkgModels2(out *jwriter.Writer, i
 		const prefix string = ",\"email\":"
 		out.RawString(prefix)
 		out.String(string(in.Email))
+	}
+	{
+		const prefix string = ",\"avatar\":"
+		out.RawString(prefix)
+		out.String(string(in.Avatar))
 	}
 	out.RawByte('}')
 }

@@ -2,8 +2,8 @@ package main
 
 import (
 	"wume-composer/internal/app/core"
-	"wume-composer/internal/pkg/config"
-	"wume-composer/internal/pkg/logger"
+	"wume-composer/internal/pkg/common/config"
+	"wume-composer/internal/pkg/common/logger"
 )
 
 func main() {

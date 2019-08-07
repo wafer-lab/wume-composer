@@ -3,11 +3,12 @@ package controllers
 import (
 	"fmt"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"wume-composer/internal/pkg/logger"
+	"wume-composer/internal/pkg/common/logger"
 	"wume-composer/internal/pkg/models"
 )
 
@@ -57,8 +58,12 @@ func getIntUrlParam(r *http.Request, name string) (int64, error) {
 	return result, nil
 }
 
-func getStrQueryParam(r *http.Request, name string) (string, error) {
-	return r.URL.Query().Get(name), nil
+func getStrQueryParam(r *http.Request, name string) (value string, err error) {
+	value = r.URL.Query().Get(name)
+	if value == "" {
+		err = models.IncorrectDataError
+	}
+	return
 }
 
 func getIntQueryParam(r *http.Request, name string) (int64, error) {
@@ -73,15 +78,33 @@ func getIntQueryParam(r *http.Request, name string) (int64, error) {
 	return result, nil
 }
 
+func getFormFile(w http.ResponseWriter, r *http.Request, maxSize int64, name string) (multipart.File, *multipart.FileHeader, error) {
+	err := r.ParseMultipartForm(maxSize)
+	if err != nil {
+		sendJson(w, http.StatusBadRequest, models.FormTooBigAnswer)
+		return nil, nil, err
+	}
+
+	file, header, err := r.FormFile(name)
+	if err != nil {
+		sendJson(w, http.StatusBadRequest, models.GetIncorrectFieldsAnswer([]string{name}))
+		return nil, nil, err
+	}
+
+	return file, header, nil
+}
+
 func parseJson(w http.ResponseWriter, r *http.Request, result models.InputModel) bool {
 	data, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		sendJson(w, http.StatusInternalServerError, models.GetDeveloperErrorAnswer(err.Error()))
+		logger.Error("Developer error: " + err.Error())
 		return false
 	}
 
 	if err = r.Body.Close(); err != nil {
 		sendJson(w, http.StatusInternalServerError, models.GetDeveloperErrorAnswer(err.Error()))
+		logger.Error("Developer error: " + err.Error())
 		return false
 	}
 

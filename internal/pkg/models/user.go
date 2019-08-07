@@ -1,7 +1,7 @@
 package models
 
 import (
-	"wume-composer/internal/pkg/verifier"
+	"wume-composer/internal/pkg/common/verifier"
 )
 
 /********************
@@ -113,6 +113,7 @@ type UserData struct {
 	Id       int64  `json:"id, string" example:"1"`
 	Username string `json:"username, string" example:"user_test"`
 	Email    string `json:"email, string" example:"user_test@test.com"`
+	Avatar    string `json:"avatar, string" example:"/upload/avatar.jpg"`
 }
 
 //easyjson:json
@@ -120,6 +121,7 @@ type UsersRowData struct {
 	Id       int64  `json:"id, string" example:"1"`
 	Username string `json:"username, string" example:"user_test"`
 	Email    string `json:"email, string" example:"user_test@test.com"`
+	Avatar    string `json:"avatar, string" example:"/upload/avatar.jpg"`
 }
 
 //easyjson:json
