@@ -64,7 +64,7 @@ type File struct {
 	Storage StorageConfig       `json:"storage"`
 }
 
-func save(config File) {
+func save(config *File) {
 	Core = config.Core
 	Auth = config.Auth
 	Db = config.Db

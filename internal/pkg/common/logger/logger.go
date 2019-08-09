@@ -33,14 +33,17 @@ func getWriter(conf *config.LoggerOut, prefix string, color string) logWriter {
 			conf.Filename = "default.log"
 		}
 		file, err := os.OpenFile(conf.Filename, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-		if err != nil {
-			panic("error opening log file: " + err.Error())
+		if err == nil {
+			files = append(files, file)
+			writer = file
+		} else {
+			log.Printf("Error opening log file (%s)! Console will be used instead.", err.Error())
+			format = color
+			writer = os.Stdout
 		}
-		files = append(files, file)
-		writer = file
 	case "console":
-		writer = os.Stdout
 		format = color
+		writer = os.Stdout
 	}
 
 	return logWriter{log.New(writer, prefix, log.LstdFlags), format}
@@ -97,7 +100,7 @@ func (l *chanLogger) Run() {
 			for _, f := range files {
 				err := f.Close()
 				if err != nil {
-					panic(err)
+					log.Println(err)
 				}
 			}
 		}()

@@ -12,7 +12,7 @@ func main() {
 		Prefix: config.Core.Prefix,
 	})
 	if err != nil {
-		core.StopApp()
 		logger.Error(err.Error())
 	}
+	core.StopApp()
 }

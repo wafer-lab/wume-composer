@@ -25,16 +25,25 @@ func getFilename() (string, error) {
 	return "", noConfigFile
 }
 
-func load(file string) (File, error) {
+func load(file string) (config *File, err error) {
 	configFile, err := os.Open(file)
-	defer configFile.Close()
 	if err != nil {
-		log.Fatalln(err.Error())
+		return nil, err
 	}
+
 	jsonParser := json.NewDecoder(configFile)
-	var config File
 	err = jsonParser.Decode(&config)
-	return config, err
+	if err != nil {
+		_ = configFile.Close()
+		return nil, err
+	}
+
+	err = configFile.Close()
+	if err != nil {
+		return nil, err
+	}
+
+	return config, nil
 }
 
 func handleStructure(val reflect.Value) {
@@ -74,19 +83,19 @@ func handleStructure(val reflect.Value) {
 	}
 }
 
-func parse(config File) {
-	handleStructure(reflect.ValueOf(&config).Elem())
+func parse(config *File) {
+	handleStructure(reflect.ValueOf(config).Elem())
 	save(config)
 }
 
 func init() {
 	file, err := getFilename()
 	if err != nil {
-		panic("Config file not found!")
+		log.Fatalln("Config file not found!")
 	}
 	config, err := load(file)
 	if err != nil {
-		panic("Invalid format! Error: " + err.Error())
+		log.Fatalln("Impossible to load config! Error: " + err.Error())
 	}
 	parse(config)
 }
